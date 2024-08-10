@@ -1,0 +1,33 @@
+name: C++ Build and Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++ clang clang-tidy
+
+    - name: Compile code
+      run: |
+        g++ -o character_counter character_counter.cpp
+        clang-tidy character_counter.cpp --checks='*' --warnings-as-errors='*'
+
+    - name: Run tests
+      run: |
+        ./character_counter << EOF
+        This is a sample paragraph to test the frequency counter program.
+        EOF
